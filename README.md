@@ -50,7 +50,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 sudo apt install docker.io
 ```
 
-## 주의할 점
+**주의할 점**
 1. 설치 후, docker-compose를 할 때 react build에서 멈추는 현상이 자주 발생하였습니다.
 이를 해결하기 위해 스크립트에 다음과 같이 추가합니다.
 ```

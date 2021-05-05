@@ -50,6 +50,15 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 sudo apt install docker.io
 ```
 
+## 주의할 점
+1. 설치 후, docker-compose를 할 때 react build에서 멈추는 현상이 자주 발생하였습니다.
+이를 해결하기 위해 스크립트에 다음과 같이 추가합니다.
+```
+    "build": "GENERATE_SOURCEMAP=false && react-scripts build"
+```
+2. .env 파일을 .gitignore에 올린 채로 git clone을 해버리면 env파일이 전달되지 않아 배포에 문제가 생길 수 있습니다.
+
+
 ## 4. route 53을 이용해 domain 설정하기
 
 저는 이전에 godaddy에서 연습용 도메인을 구매했었기 때문에 이를 route 53과 연결합니다.

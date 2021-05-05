@@ -1,0 +1,71 @@
+version: '3'
+services:
+    mongo-rs0-1:
+        container_name: "mongo-rs0-1"
+        image: "mongo-start"
+        build: ./mongo-rs0-1
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./mongo-rs0-1/data:/data/db
+        depends_on:
+            - "mongo-rs0-2"
+            - "mongo-rs0-3"
+
+    mongo-rs0-2:
+        container_name: "mongo-rs0-2"
+        image: "mongo"
+        command: --replSet rs0 --oplogSize 128
+        ports:
+            - "27018:27017"
+        volumes:
+            - ./mongo-rs0-2/data:/data/db
+
+    mongo-rs0-3:
+        container_name: "mongo-rs0-3"
+        image: "mongo"
+        command: --replSet rs0 --oplogSize 128
+        ports:
+            - "27019:27017"
+        volumes:
+            - ./mongo-rs0-3/data:/data/db
+    
+    setup-rs:
+        image: "setup-rs"
+        build: ./setup
+        depends_on:
+          - "mongo-rs0-1"
+
+    nginx:
+        container_name: "nginx"
+        depends_on:
+            - api
+            - client
+        restart: always
+        build:
+          dockerfile: Dockerfile
+          context: ./nginx
+        ports:
+          - "80:80"
+          
+    api:
+        container_name: "api"
+        build:
+            dockerfile: Dockerfile
+            context: ./server
+        volumes:
+            - /app/node_modules
+            - ./server:/app
+        depends_on:
+            - "mongo-rs0-1"
+            - "setup-rs"
+
+    client:
+        container_name: "client"
+        stdin_open: true
+        build:
+            dockerfile: Dockerfile
+            context: ./client
+        volumes:
+            - /app/node_modules
+            - ./client:/app
